@@ -29,6 +29,17 @@ Cargo will only pull the `kignore` command and won't add a subcommand to `git.
 $ cargo install kignore
 ```
 
+#### Post install
+
+To get the `git ignore` subcommand working you will need to have the file
+git-ignore available on your path, either add it yourself using
+`git-alias/git-ignore` as a template or:
+
+```
+git clone https://github.com/kjuulh/gitignore
+./scripts/install-git-alias.sh # only tested on mac and linux
+```
+
 ### Homebrew
 
 TBA
