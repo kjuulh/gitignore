@@ -42,4 +42,6 @@ git clone https://github.com/kjuulh/gitignore
 
 ### Homebrew
 
-TBA
+Added in HomebrewFormula
+
+Instructions TBA
