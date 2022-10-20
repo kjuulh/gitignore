@@ -6,11 +6,15 @@ to .gitignore, this is by default also run in interactive mode, giving you the
 option to confirm or deny
 
 ```bash
-$ git ignore 'node_modules/'
+found .gitignore .../some-path/.gitignore
+found .gitignore
 Added node_modules/ to .gitignore
-Searching env for pattern...
+Removed node_modules/ from git index
+```
 
-found:
-<gitroot>/client/node_modules
-? Remove from git state? (Y)es/(N)o/(C)ontinue/(A)bort
+```bash
+$ git ignore 'node_modules/'
+found .gitignore .../some-path/.gitignore
+Added node_modules/ to .gitignore
+Removed node_modules/ from git index
 ```
