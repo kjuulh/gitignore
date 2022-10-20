@@ -18,3 +18,17 @@ found .gitignore .../some-path/.gitignore
 Added node_modules/ to .gitignore
 Removed node_modules/ from git index
 ```
+
+## Installation
+
+### Cargo
+
+Cargo will only pull the `gitignore` command and won't add a subcommand to `git.
+
+```bash
+$ cargo install kjuulh/gitignore
+```
+
+### Homebrew
+
+TBA
