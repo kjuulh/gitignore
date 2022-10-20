@@ -119,8 +119,10 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
 
     // TODO: Run git rm -r --cached --pathspec <pattern> on the .git root
     let output = std::process::Command::new("git")
+        .arg("rm")
         .arg("-r")
         .arg("--cached")
+        .arg("--ignore-unmatch")
         .arg(pattern)
         .output()
         .context("could not process git remove from index command")?;
@@ -133,6 +135,8 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
     if !output.status.success() {
         return Err(eyre::anyhow!("failed to run git index command"));
     }
+
+    term.write_line("git successfully removed files")?;
 
     Ok(())
 }
