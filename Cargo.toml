@@ -1,5 +1,5 @@
 [package]
-name = "gitignore"
+name = "kignore"
 version = "0.1.0"
 authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
 license = "MIT"
@@ -8,7 +8,7 @@ keywords = ["git", "ignore", "clap", "interactive"]
 repository = "https://github.com/kjuulh/gitignore"
 documentation = "https://docs.rs/gitignore"
 description = """
-gitignore is a tool for easily adding patterns to gitignore and cleaning up afterwards
+kignore is a tool for easily adding patterns to .gitignore and cleaning up afterwards
 """
 categories = ["command-line-interface"]
 edition = "2021"
