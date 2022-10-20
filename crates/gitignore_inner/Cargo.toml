@@ -11,7 +11,7 @@ documentation = "https://docs.rs/gitignore"
 description = """
 gitignore_inner is the internal module for cargo 
 """
-categories = ["git-tools"]
+categories = ["command-line-interface"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

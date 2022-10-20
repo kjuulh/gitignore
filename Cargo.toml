@@ -10,7 +10,7 @@ documentation = "https://docs.rs/gitignore"
 description = """
 gitignore is a tool for easily adding patterns to gitignore and cleaning up afterwards
 """
-categories = ["git-tools"]
+categories = ["command-line-interface"]
 edition = "2021"
 
 [workspace]
