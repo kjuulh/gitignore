@@ -7,7 +7,6 @@ option to confirm or deny
 
 ```bash
 found .gitignore .../some-path/.gitignore
-found .gitignore
 Added node_modules/ to .gitignore
 Removed node_modules/ from git index
 ```
