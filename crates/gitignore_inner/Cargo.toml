@@ -2,6 +2,16 @@
 name = "gitignore_inner"
 version = "0.1.0"
 edition = "2021"
+authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
+license = "MIT"
+readme = "README.md"
+keywords = ["git", "ignore", "clap", "interactive"]
+repository = "https://github.com/kjuulh/gitignore"
+documentation = "https://docs.rs/gitignore"
+description = """
+gitignore_inner is the internal module for cargo 
+"""
+categories = ["git-tools"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

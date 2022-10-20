@@ -21,4 +21,3 @@ members = [
 [dependencies]
 eyre = "0.6.8"
 gitignore_inner = {path = "crates/gitignore_inner", version = "0.1.0"}
-
