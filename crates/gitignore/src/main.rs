@@ -117,7 +117,22 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
         }
     }
 
-    // TODO: Run git rm -r --cached on the .git root
+    // TODO: Run git rm -r --cached --pathspec <pattern> on the .git root
+    let output = std::process::Command::new("git")
+        .arg("-r")
+        .arg("--cached")
+        .arg(pattern)
+        .output()
+        .context("could not process git remove from index command")?;
+    String::from_utf8(output.stdout)?
+        .lines()
+        .chain(String::from_utf8(output.stderr)?.lines())
+        .try_for_each(|l| term.write_line(l))
+        .context("could not print all output to terminal")?;
+
+    if !output.status.success() {
+        return Err(eyre::anyhow!("failed to run git index command"));
+    }
 
     Ok(())
 }
