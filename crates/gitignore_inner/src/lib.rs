@@ -5,7 +5,7 @@ use std::{env::current_dir, io::Read, path::PathBuf};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
-fn main() -> eyre::Result<()> {
+pub fn main() -> eyre::Result<()> {
     let matches = Command::new("gitignore")
         .version("0.1")
         .author("Kasper J. Hermansen <contact@kjuulh.io>")

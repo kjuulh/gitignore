@@ -83,6 +83,14 @@ dependencies = [
 name = "gitignore"
 version = "0.1.0"
 dependencies = [
+ "eyre",
+ "gitignore_inner",
+]
+
+[[package]]
+name = "gitignore_inner"
+version = "0.1.0"
+dependencies = [
  "clap",
  "console",
  "eyre",

@@ -1,4 +1,24 @@
+[package]
+name = "gitignore"
+version = "0.1.0"
+authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
+license = "MIT"
+readme = "README.md"
+keywords = ["git", "ignore", "clap", "interactive"]
+repository = "https://github.com/kjuulh/gitignore"
+documentation = "https://docs.rs/gitignore"
+description = """
+gitignore is a tool for easily adding patterns to gitignore and cleaning up afterwards
+"""
+categories = ["git-tools"]
+edition = "2021"
+
 [workspace]
 members = [
-  "crates/gitignore"
+  "crates/gitignore_inner"
 ]
+
+[dependencies]
+eyre = "0.6.8"
+gitignore_inner = {path = "crates/gitignore_inner", version = "0.1.0"}
+

@@ -1,5 +1,5 @@
 [package]
-name = "gitignore"
+name = "gitignore_inner"
 version = "0.1.0"
 edition = "2021"
 
