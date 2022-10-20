@@ -26,7 +26,7 @@ Removed node_modules/ from git index
 Cargo will only pull the `kignore` command and won't add a subcommand to `git.
 
 ```bash
-$ cargo install kjuulh/gitignore
+$ cargo install kignore
 ```
 
 ### Homebrew
