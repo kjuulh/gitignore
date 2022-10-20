@@ -2,8 +2,6 @@ use clap::{Arg, Command};
 use eyre::{Context, ContextCompat};
 use std::io::prelude::*;
 use std::{env::current_dir, io::Read, path::PathBuf};
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 
 fn main() -> eyre::Result<()> {
     let matches = Command::new("gitignore")
@@ -20,33 +18,14 @@ Easily add patterns using `git ignore <pattern>` this will by default also help 
                 .long_help("the pattern you want to ignore in the nearest .gitignore file")
                 .required(true),
         ).arg(
-            Arg::new("log-level").long("log-level").help("choose a log level and get more messages").long_help("Choose a log level and get more message, defaults to [fatal]"))
+            Arg::new("log-level").long("log-level").help("choose a log level and get more messages").long_help("Choose a log level and get more message, defaults to [INFO]"))
         .get_matches();
-
-    let log_level = match matches.get_one::<String>("log-level").map(|f| f.as_str()) {
-        Some("off") => "off",
-        Some("info") => "info",
-        Some("debug") => "debug",
-        Some("warn") => "warn",
-        Some("error") => "error",
-        _ => "error",
-    };
-
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(format!(
-            "gitignore={}",
-            log_level
-        )))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
-    let term = console::Term::stdout();
 
     let pattern = matches
         .get_one::<String>("pattern")
         .context("missing [pattern]")?;
 
-    add_gitignore_pattern(term, pattern)
+    add_gitignore_pattern(pattern)
 }
 
 enum GitActions {
@@ -59,8 +38,7 @@ enum GitActions {
     },
 }
 
-fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<()> {
-    term.write_line("git ignore: Add pattern")?;
+fn add_gitignore_pattern(pattern: &String) -> eyre::Result<()> {
     let curdir = current_dir().context(
         "could not find current_dir, you may not have permission to access that directory",
     )?;
@@ -84,8 +62,8 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
             git_path,
             gitignore_path,
         } => {
-            term.write_line("Found existing .gitignore")?;
             let mut gitignore_file = open_gitignore_file(&gitignore_path)?;
+            // TODO: search for pattern in file
             let mut gitignore_content = String::new();
             gitignore_file
                 .read_to_string(&mut gitignore_content)
@@ -94,22 +72,18 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
                     gitignore_path.to_string_lossy()
                 ))?;
             if gitignore_content.contains(pattern) {
-                term.write_line(".gitignore already contains pattern, skipping")?;
                 return Ok(());
             }
 
-            term.write_line("adding pattern to file")?;
             writeln!(gitignore_file, "{}", pattern).context("could not write contents to file")?;
             gitignore_file
                 .sync_all()
                 .context("failed to write data to disk")?;
         }
         GitActions::CreateIgnoreAndAddPattern { git_path } => {
-            term.write_line(
-                "could not find .gitignore file, creating one in the root of the git repository",
-            )?;
+            // TODO: Create gitignore file in root
             let mut gitignore_file = create_gitignore_file(&git_path)?;
-            term.write_line("adding pattern to file")?;
+            // TODO: do same as above
             writeln!(gitignore_file, "{}", pattern).context("could not write contents to file")?;
             gitignore_file
                 .sync_all()
