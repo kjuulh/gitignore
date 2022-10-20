@@ -50,13 +50,8 @@ Easily add patterns using `git ignore <pattern>` this will by default also help 
 }
 
 enum GitActions {
-    AddPattern {
-        git_path: PathBuf,
-        gitignore_path: PathBuf,
-    },
-    CreateIgnoreAndAddPattern {
-        git_path: PathBuf,
-    },
+    AddPattern { gitignore_path: PathBuf },
+    CreateIgnoreAndAddPattern { git_path: PathBuf },
 }
 
 fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<()> {
@@ -67,8 +62,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
     let actions = match search_for_dotgitignore(&curdir)? {
         // If we have an ignore path, make sure it is in a git repo as well
         GitSearchResult::GitIgnore(ignorepath) => match search_for_git_root(&curdir)? {
-            GitSearchResult::Git(gitpath) => GitActions::AddPattern {
-                git_path: gitpath,
+            GitSearchResult::Git(_gitpath) => GitActions::AddPattern {
                 gitignore_path: ignorepath,
             },
             _ => return Err(eyre::anyhow!("could not find parent git directory")),
@@ -80,10 +74,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
     };
 
     match actions {
-        GitActions::AddPattern {
-            git_path,
-            gitignore_path,
-        } => {
+        GitActions::AddPattern { gitignore_path } => {
             term.write_line("Found existing .gitignore")?;
             let mut gitignore_file = open_gitignore_file(&gitignore_path)?;
             let mut gitignore_content = String::new();
