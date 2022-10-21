@@ -6,7 +6,7 @@ class Kignore < Formula
 
   if OS.mac?
     url "https://github.com/kjuulh/kignore/releases/download/#{version}/kignore-#{version}-x86_64-apple-darwin.tar.gz"
-    sha256 ""
+    sha256 "8eacb5cf0d4116161f291006bc6c91b8ce2760eab0fcf8cb79a62c246bdfff89"
   end
 
   def install
