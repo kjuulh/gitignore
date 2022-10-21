@@ -1,7 +1,7 @@
-class Kignore < Formula
+class KignoreBin < Formula
   desc "Easily add items to .gitignore and cleanup afterwards"
   homepage "https://github.com/kjuulh/gitignore"
-  version '0.1.1'
+  version "0.1.2"
   license "MIT"
 
   if OS.mac?
