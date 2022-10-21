@@ -159,7 +159,7 @@ jobs:
             echo "ASSET=$staging.zip" >> $GITHUB_ENV
           else
             # The man page is only generated on Unix systems.
-            cp "$outdir"/kignore.1 "$staging/doc/"
+            #cp "$outdir"/kignore.1 "$staging/doc/"
             cp "target/${{ matrix.target }}/release/kignore" "$staging/"
             tar czf "$staging.tar.gz" "$staging"
             echo "ASSET=$staging.tar.gz" >> $GITHUB_ENV
