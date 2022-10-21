@@ -44,4 +44,7 @@ git clone https://github.com/kjuulh/gitignore
 
 Added in HomebrewFormula
 
-Instructions TBA
+```bash
+$ brew tap kjuulh/gitignore  https://github.com/kjuulh/gitignore
+$ brew install kjuulh/gitignore/kignore-bin
+```
