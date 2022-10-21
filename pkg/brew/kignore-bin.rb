@@ -12,7 +12,6 @@ class KignoreBin < Formula
   def install
     bin.install "kignore"
     bin.install "git-ignore"
-    bin.install "git-ignore" => "git-kignore"
   end
 end
 
