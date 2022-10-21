@@ -159,6 +159,7 @@ jobs:
             7z a "$staging.zip" "$staging"
             echo "ASSET=$staging.zip" >> $GITHUB_ENV
           else
+            cp "git-alias/git-ignore" "$staging/"
             # The man page is only generated on Unix systems.
             #cp "$outdir"/kignore.1 "$staging/doc/"
             cp "target/${{ matrix.target }}/release/kignore" "$staging/"
