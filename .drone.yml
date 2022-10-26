@@ -4,6 +4,6 @@ type: docker
 name: "test"
 steps:
   - name: test
-    image: bash
+    image: harbor.front.kjuulh.io/docker-proxy/library/bash:latest
     commands:
       - echo 'Run tests'
