@@ -27,9 +27,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "clap"
-version = "4.0.17"
+version = "4.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06badb543e734a2d6568e19a40af66ed5364360b9226184926f89d229b4b4267"
+checksum = "335867764ed2de42325fafe6d18b8af74ba97ee0c590fa016f157535b42ab04b"
 dependencies = [
  "atty",
  "bitflags",
@@ -80,14 +80,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gitignore"
-version = "0.1.0"
-dependencies = [
- "eyre",
- "gitignore_inner",
-]
-
-[[package]]
 name = "gitignore_inner"
 version = "0.1.0"
 dependencies = [
@@ -118,6 +110,14 @@ name = "itoa"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4217ad341ebadf8d8e724e264f13e593e0648f5b3e94b3896a5df283be015ecc"
+
+[[package]]
+name = "kignore"
+version = "0.1.1"
+dependencies = [
+ "eyre",
+ "gitignore_inner",
+]
 
 [[package]]
 name = "lazy_static"
