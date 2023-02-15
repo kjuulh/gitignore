@@ -16,8 +16,8 @@ categories = ["command-line-interface"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.0.32", features = ["env", "unicode", "string"] }
-console = "0.15.4"
+clap = { version = "4.1.5", features = ["env", "unicode", "string"] }
+console = "0.15.5"
 eyre = "0.6.8"
 tracing = { version = "0.1.37", features = ["log"] }
 tracing-subscriber = { version = "0.3.16", features = ["local-time", "env-filter"] }
