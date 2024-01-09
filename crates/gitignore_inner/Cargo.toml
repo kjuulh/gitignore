@@ -17,7 +17,7 @@ categories = ["command-line-interface"]
 
 [dependencies]
 clap = { version = "4.4.14", features = ["env", "unicode", "string"] }
-console = "0.15.7"
+console = "0.15.8"
 eyre = "0.6.11"
 tracing = { version = "0.1.40", features = ["log"] }
 tracing-subscriber = { version = "0.3.18", features = ["local-time", "env-filter"] }
