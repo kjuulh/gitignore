@@ -1,6 +1,6 @@
 [package]
 name = "gitignore_inner"
-version = "0.1.0"
+version.workspace = true
 edition = "2021"
 authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
 license = "MIT"
@@ -20,4 +20,7 @@ clap = { version = "4.5.4", features = ["env", "unicode", "string"] }
 console = "0.15.8"
 eyre = "0.6.12"
 tracing = { version = "0.1.40", features = ["log"] }
-tracing-subscriber = { version = "0.3.18", features = ["local-time", "env-filter"] }
+tracing-subscriber = { version = "0.3.18", features = [
+  "local-time",
+  "env-filter",
+] }

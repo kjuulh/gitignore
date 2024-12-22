@@ -1,9 +1,2 @@
-
-kind: pipeline
-type: docker
-name: "test"
-steps:
-  - name: test
-    image: harbor.front.kjuulh.io/docker-proxy/library/bash:latest
-    commands:
-      - echo 'Run tests'
+kind: template
+load: cuddle-rust-cli-plan.yaml

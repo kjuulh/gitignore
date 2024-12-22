@@ -1,6 +1,12 @@
+[workspace]
+members = ["crates/gitignore_inner", "."]
+
+[workspace.package]
+version = "0.1.2"
+
 [package]
 name = "kignore"
-version = "0.1.2"
+version.workspace = true
 authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
 license = "MIT"
 readme = "README.md"
@@ -12,9 +18,6 @@ kignore is a tool for easily adding patterns to .gitignore and cleaning up after
 """
 categories = ["command-line-interface"]
 edition = "2021"
-
-[workspace]
-members = ["crates/gitignore_inner"]
 
 [dependencies]
 eyre = "0.6.12"
