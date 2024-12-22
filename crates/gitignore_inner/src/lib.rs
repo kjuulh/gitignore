@@ -99,7 +99,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
             term.write_line(
                 "could not find .gitignore file, creating one in the root of the git repository",
             )?;
-            let mut gitignore_file = create_gitignore_file(&git_path)?;
+            let mut gitignore_file = create_gitignore_file(git_path)?;
             term.write_line("adding pattern to file")?;
             writeln!(gitignore_file, "{}", pattern).context("could not write contents to file")?;
             gitignore_file
@@ -113,6 +113,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
         .arg("rm")
         .arg("-r")
         .arg("--cached")
+        .arg("-f")
         .arg("--ignore-unmatch")
         .arg(pattern)
         .output()
@@ -132,7 +133,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
     Ok(())
 }
 
-fn create_gitignore_file(gitroot: &PathBuf) -> eyre::Result<std::fs::File> {
+fn create_gitignore_file(gitroot: PathBuf) -> eyre::Result<std::fs::File> {
     let mut ignore_path = gitroot.clone();
     if !ignore_path.pop() {
         return Err(eyre::anyhow!("could not open parent dir"));
@@ -156,7 +157,7 @@ fn open_gitignore_file(gitignore: &PathBuf) -> eyre::Result<std::fs::File> {
             gitignore.to_string_lossy()
         ))?;
 
-    return Ok(file);
+    Ok(file)
 }
 
 enum GitSearchResult {
@@ -178,9 +179,8 @@ fn search_for_git_root(path: &PathBuf) -> eyre::Result<GitSearchResult> {
         let entry = direntry.context("could not access file")?;
 
         let file_name = entry.file_name().to_os_string();
-        match file_name.to_str().context("could not convert to str")? {
-            ".git" => return Ok(GitSearchResult::Git(entry.path())),
-            _ => {}
+        if file_name.to_str().context("could not convert to str")? == ".git" {
+            return Ok(GitSearchResult::Git(entry.path()));
         }
     }
 
@@ -209,10 +209,20 @@ fn search_for_dotgitignore(path: &PathBuf) -> eyre::Result<GitSearchResult> {
 
         let file_name = entry.file_name().to_os_string();
 
-        match file_name.to_str().context("could not convert to str")? {
-            ".gitignore" => return Ok(GitSearchResult::GitIgnore(entry.path())),
-            ".git" => return Ok(GitSearchResult::Git(entry.path())),
-            _ => {}
+        if file_name.to_str().context("could not convert to str")? == ".gitignore" {
+            return Ok(GitSearchResult::GitIgnore(entry.path()));
+        }
+    }
+
+    let direntries = std::fs::read_dir(path)
+        .context(format!("could not open dir: {}", path.to_string_lossy()))?;
+    for direntry in direntries {
+        let entry = direntry.context("could not access file")?;
+
+        let file_name = entry.file_name().to_os_string();
+
+        if file_name.to_str().context("could not convert to str")? == ".git" {
+            return Ok(GitSearchResult::Git(entry.path()));
         }
     }
 

@@ -1,6 +1,6 @@
 [package]
 name = "kignore"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
 license = "MIT"
 readme = "README.md"
@@ -14,10 +14,8 @@ categories = ["command-line-interface"]
 edition = "2021"
 
 [workspace]
-members = [
-  "crates/gitignore_inner"
-]
+members = ["crates/gitignore_inner"]
 
 [dependencies]
 eyre = "0.6.12"
-gitignore_inner = {path = "crates/gitignore_inner", version = "0.1.0"}
+gitignore_inner = { path = "crates/gitignore_inner", version = "0.1.0" }
