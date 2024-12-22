@@ -1,10 +1,17 @@
 use clap::{Arg, Command};
 use console::style;
-use eyre::{Context, ContextCompat};
+use eyre::{Context, ContextCompat, OptionExt};
 use std::io::prelude::*;
+use std::os::unix::fs::PermissionsExt;
 use std::{env::current_dir, io::Read, path::PathBuf};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+
+const SH_FILE_CONTENTS: &[u8] = b"#!/usr/bin/env sh
+set -e
+
+kignore $@
+";
 
 pub fn main() -> eyre::Result<()> {
     let matches = Command::new("gitignore")
@@ -19,35 +26,82 @@ Easily add patterns using `git ignore <pattern>` this will by default also help 
             Arg::new("pattern")
                 .help("the pattern you want to ignore")
                 .long_help("the pattern you want to ignore in the nearest .gitignore file")
-                .required(true),
         ).arg(
-            Arg::new("log-level").long("log-level").help("choose a log level and get more messages").long_help("Choose a log level and get more message, defaults to [fatal]"))
+            Arg::new("log-level").long("log-level").default_value("warn").help("choose a log level and get more messages").long_help("Choose a log level and get more message, defaults to [warn]")
+        )
+        .subcommand(clap::Command::new("init").subcommand_required(true).subcommand(Command::new("zsh")))
         .get_matches();
 
-    let log_level = match matches.get_one::<String>("log-level").map(|f| f.as_str()) {
-        Some("off") => "off",
-        Some("info") => "info",
-        Some("debug") => "debug",
-        Some("warn") => "warn",
-        Some("error") => "error",
-        _ => "error",
-    };
+    match matches.subcommand() {
+        Some(("init", args)) => match args
+            .subcommand()
+            .expect("should never be able to call on init")
+        {
+            ("zsh", _) => {
+                let bin_dir = dirs::executable_dir().ok_or_eyre("failed to find executable dir")?;
 
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(format!(
-            "gitignore={}",
-            log_level
-        )))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+                let alias_script = bin_dir.join("git-ignore");
+                if let Ok(existing_file) = std::fs::read(&alias_script) {
+                    if existing_file == SH_FILE_CONTENTS {
+                        return Ok(());
+                    }
+                } else {
+                    std::fs::create_dir_all(&bin_dir).context("failed to create bin dir")?;
+                }
 
-    let term = console::Term::stdout();
+                let mut file = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create(true)
+                    .truncate(true)
+                    .open(&alias_script)?;
 
-    let pattern = matches
-        .get_one::<String>("pattern")
-        .context("missing [pattern]")?;
+                file.write_all(SH_FILE_CONTENTS)?;
+                file.flush()?;
 
-    add_gitignore_pattern(term, pattern)
+                // Set the file to be executable
+                let metadata = file.metadata()?;
+                let mut permissions = metadata.permissions();
+                permissions.set_mode(0o755); // rwxr-xr-x
+                file.set_permissions(permissions)?;
+
+                println!(
+                    "successfully wrote alias to {}",
+                    style(alias_script.display()).green()
+                );
+
+                Ok(())
+            }
+            (subcommand, _) => {
+                panic!("cannot call on subcommand: {}", subcommand);
+            }
+        },
+        _ => {
+            let log_level = match matches.get_one::<String>("log-level").map(|f| f.as_str()) {
+                Some("off") => "off",
+                Some("info") => "info",
+                Some("debug") => "debug",
+                Some("warn") => "warn",
+                Some("error") => "error",
+                _ => "error",
+            };
+
+            tracing_subscriber::registry()
+                .with(tracing_subscriber::EnvFilter::new(format!(
+                    "gitignore={}",
+                    log_level
+                )))
+                .with(tracing_subscriber::fmt::layer())
+                .init();
+
+            let term = console::Term::stdout();
+
+            let pattern = matches
+                .get_one::<String>("pattern")
+                .context("missing [pattern]")?;
+
+            add_gitignore_pattern(term, pattern)
+        }
+    }
 }
 
 enum GitActions {
