@@ -3,10 +3,10 @@ name = "kignore"
 version.workspace = true
 authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
 license = "MIT"
-readme = "README.md"
+readme = "../../README.md"
 keywords = ["git", "ignore", "clap", "interactive"]
-repository = "https://github.com/kjuulh/gitignore"
-documentation = "https://docs.rs/gitignore"
+repository = "https://git.front.kjuulh.io/kjuulh/gitignore"
+documentation = "https://docs.rs/kignore"
 description = """
 kignore is a tool for easily adding patterns to .gitignore and cleaning up afterwards
 """
