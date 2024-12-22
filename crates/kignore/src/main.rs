@@ -1,4 +1,5 @@
 use clap::{Arg, Command};
+use console::style;
 use eyre::{Context, ContextCompat};
 use std::io::prelude::*;
 use std::{env::current_dir, io::Read, path::PathBuf};
@@ -55,7 +56,7 @@ enum GitActions {
 }
 
 fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<()> {
-    term.write_line("git ignore: Add pattern")?;
+    println!("git ignore: Add pattern");
     let curdir = current_dir().context(
         "could not find current_dir, you may not have permission to access that directory",
     )?;
@@ -75,7 +76,7 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
 
     match actions {
         GitActions::AddPattern { gitignore_path } => {
-            term.write_line("Found existing .gitignore")?;
+            println!("Found existing {}", style(".gitignore").green());
             let mut gitignore_file = open_gitignore_file(&gitignore_path)?;
             let mut gitignore_content = String::new();
             gitignore_file
@@ -85,22 +86,26 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
                     gitignore_path.to_string_lossy()
                 ))?;
             if gitignore_content.contains(pattern) {
-                term.write_line(".gitignore already contains pattern, skipping")?;
+                println!(
+                    ".gitignore already contains pattern, {}",
+                    style("skipping...").blue()
+                );
                 return Ok(());
             }
 
-            term.write_line("adding pattern to file")?;
+            println!("adding pattern to file");
             writeln!(gitignore_file, "{}", pattern).context("could not write contents to file")?;
             gitignore_file
                 .sync_all()
                 .context("failed to write data to disk")?;
         }
         GitActions::CreateIgnoreAndAddPattern { git_path } => {
-            term.write_line(
-                "could not find .gitignore file, creating one in the root of the git repository",
-            )?;
+            println!(
+                "could not find {} file, creating one in the root of the git repository",
+                style(".gitignore").yellow()
+            );
             let mut gitignore_file = create_gitignore_file(git_path)?;
-            term.write_line("adding pattern to file")?;
+            println!("adding pattern to file");
             writeln!(gitignore_file, "{}", pattern).context("could not write contents to file")?;
             gitignore_file
                 .sync_all()
@@ -121,8 +126,19 @@ fn add_gitignore_pattern(term: console::Term, pattern: &String) -> eyre::Result<
     String::from_utf8(output.stdout)?
         .lines()
         .chain(String::from_utf8(output.stderr)?.lines())
-        .try_for_each(|l| term.write_line(l))
-        .context("could not print all output to terminal")?;
+        .map(|l| {
+            // make rm 'path' look nice
+            if l.contains("rm") {
+                if let Some((_, pruned_first)) = l.split_once("'") {
+                    if let Some((content, _)) = pruned_first.rsplit_once("'") {
+                        return content;
+                    }
+                }
+            }
+
+            l
+        })
+        .for_each(|l| println!("removed from git history: {}", style(l).yellow()));
 
     if !output.status.success() {
         return Err(eyre::anyhow!("failed to run git index command"));
