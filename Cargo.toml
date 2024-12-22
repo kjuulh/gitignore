@@ -1,24 +1,6 @@
 [workspace]
-members = ["crates/gitignore_inner", "."]
+members = ["crates/*"]
+resolver = "2"
 
 [workspace.package]
 version = "0.1.3"
-
-[package]
-name = "kignore"
-version.workspace = true
-authors = ["Kasper J. Hermansen <contact@kjuulh.io>"]
-license = "MIT"
-readme = "README.md"
-keywords = ["git", "ignore", "clap", "interactive"]
-repository = "https://github.com/kjuulh/gitignore"
-documentation = "https://docs.rs/gitignore"
-description = """
-kignore is a tool for easily adding patterns to .gitignore and cleaning up afterwards
-"""
-categories = ["command-line-interface"]
-edition = "2021"
-
-[dependencies]
-eyre = "0.6.12"
-gitignore_inner = { path = "crates/gitignore_inner", version = "0.1.0" }
