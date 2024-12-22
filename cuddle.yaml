@@ -3,7 +3,7 @@
 base: "git@git.front.kjuulh.io:kjuulh/cuddle-rust-cli-plan.git"
 
 vars:
-  service: "gitignore"
+  service: "kignore"
   registry: kasperhermansen
 
 please:
