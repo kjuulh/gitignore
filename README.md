@@ -27,24 +27,22 @@ Cargo will only pull the `kignore` command and won't add a subcommand to `git.
 
 ```bash
 $ cargo install kignore
+$ cargo binstall kignore # binstall will warn that git.front.kjuulh.io isn't a valid repo, it is still installable though
+
 ```
 
 #### Post install
 
 To get the `git ignore` subcommand working you will need to have the file
-git-ignore available on your path, either add it yourself using
-`git-alias/git-ignore` as a template or:
+git-ignore available on your path
 
 ```
-git clone https://github.com/kjuulh/gitignore
-./scripts/install-git-alias.sh # only tested on mac and linux
-```
+# zsh
+eval "kignore init zsh"
 
-### Homebrew
+# shell
+eval "kignore init sh"
 
-Added in HomebrewFormula
-
-```bash
-$ brew tap kjuulh/gitignore  https://github.com/kjuulh/gitignore
-$ brew install kjuulh/gitignore/kignore-bin
+# bash
+eval "kignore init bash"
 ```

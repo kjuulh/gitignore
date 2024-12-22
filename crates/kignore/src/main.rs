@@ -7,7 +7,19 @@ use std::{env::current_dir, io::Read, path::PathBuf};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
+const ZSH_FILE_CONTENTS: &[u8] = b"#!/usr/bin/env zsh
+set -e
+
+kignore $@
+";
+
 const SH_FILE_CONTENTS: &[u8] = b"#!/usr/bin/env sh
+set -e
+
+kignore $@
+";
+
+const BASH_FILE_CONTENTS: &[u8] = b"#!/usr/bin/env bash
 set -e
 
 kignore $@
@@ -18,18 +30,32 @@ pub fn main() -> eyre::Result<()> {
         .version("0.1")
         .author("Kasper J. Hermansen <contact@kjuulh.io>")
         .about("Easily ignore items and remove from git state")
-        .long_about("git ignore is a utility tool for easily adding patterns to your .gitignore file.
-Easily add patterns using `git ignore <pattern>` this will by default also help you remove committed code violating these patterns
-                    ")
+        .long_about(
+            "git ignore is a utility tool for easily adding patterns to your .gitignore file.
+Easily add patterns using `git ignore <pattern>` this will by default
+also help you remove committed code violating these patterns
+                    ",
+        )
         .propagate_version(true)
         .arg(
             Arg::new("pattern")
                 .help("the pattern you want to ignore")
-                .long_help("the pattern you want to ignore in the nearest .gitignore file")
-        ).arg(
-            Arg::new("log-level").long("log-level").default_value("warn").help("choose a log level and get more messages").long_help("Choose a log level and get more message, defaults to [warn]")
+                .long_help("the pattern you want to ignore in the nearest .gitignore file"),
         )
-        .subcommand(clap::Command::new("init").subcommand_required(true).subcommand(Command::new("zsh")))
+        .arg(
+            Arg::new("log-level")
+                .long("log-level")
+                .default_value("warn")
+                .help("choose a log level and get more messages")
+                .long_help("Choose a log level and get more message, defaults to [warn]"),
+        )
+        .subcommand(
+            clap::Command::new("init")
+                .subcommand_required(true)
+                .subcommand(Command::new("zsh"))
+                .subcommand(Command::new("sh"))
+                .subcommand(Command::new("bash")),
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -37,40 +63,9 @@ Easily add patterns using `git ignore <pattern>` this will by default also help 
             .subcommand()
             .expect("should never be able to call on init")
         {
-            ("zsh", _) => {
-                let bin_dir = dirs::executable_dir().ok_or_eyre("failed to find executable dir")?;
-
-                let alias_script = bin_dir.join("git-ignore");
-                if let Ok(existing_file) = std::fs::read(&alias_script) {
-                    if existing_file == SH_FILE_CONTENTS {
-                        return Ok(());
-                    }
-                } else {
-                    std::fs::create_dir_all(&bin_dir).context("failed to create bin dir")?;
-                }
-
-                let mut file = std::fs::OpenOptions::new()
-                    .write(true)
-                    .create(true)
-                    .truncate(true)
-                    .open(&alias_script)?;
-
-                file.write_all(SH_FILE_CONTENTS)?;
-                file.flush()?;
-
-                // Set the file to be executable
-                let metadata = file.metadata()?;
-                let mut permissions = metadata.permissions();
-                permissions.set_mode(0o755); // rwxr-xr-x
-                file.set_permissions(permissions)?;
-
-                println!(
-                    "successfully wrote alias to {}",
-                    style(alias_script.display()).green()
-                );
-
-                Ok(())
-            }
+            ("zsh", _) => init_script(ShellType::Zsh),
+            ("bash", _) => init_script(ShellType::Bash),
+            ("sh", _) => init_script(ShellType::Shell),
             (subcommand, _) => {
                 panic!("cannot call on subcommand: {}", subcommand);
             }
@@ -304,4 +299,51 @@ fn search_for_dotgitignore(path: &PathBuf) -> eyre::Result<GitSearchResult> {
     }
 
     search_for_dotgitignore(&upwards_par)
+}
+
+enum ShellType {
+    Bash,
+    Shell,
+    Zsh,
+}
+
+fn init_script(shell: ShellType) -> eyre::Result<()> {
+    let bin_dir = dirs::executable_dir().ok_or_eyre("failed to find executable dir")?;
+
+    let script = match shell {
+        ShellType::Bash => BASH_FILE_CONTENTS,
+        ShellType::Shell => SH_FILE_CONTENTS,
+        ShellType::Zsh => ZSH_FILE_CONTENTS,
+    };
+
+    let alias_script = bin_dir.join("git-ignore");
+    if let Ok(existing_file) = std::fs::read(&alias_script) {
+        if existing_file == script {
+            return Ok(());
+        }
+    } else {
+        std::fs::create_dir_all(&bin_dir).context("failed to create bin dir")?;
+    }
+
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(&alias_script)?;
+
+    file.write_all(script)?;
+    file.flush()?;
+
+    // Set the file to be executable
+    let metadata = file.metadata()?;
+    let mut permissions = metadata.permissions();
+    permissions.set_mode(0o755); // rwxr-xr-x
+    file.set_permissions(permissions)?;
+
+    println!(
+        "successfully wrote alias to {}",
+        style(alias_script.display()).green()
+    );
+
+    Ok(())
 }
