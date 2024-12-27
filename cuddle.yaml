@@ -7,7 +7,7 @@ vars:
   registry: kasperhermansen
 
   rust:
-    publish:
+    publish: {}
 
 please:
   project:
