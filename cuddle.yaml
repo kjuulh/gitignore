@@ -6,6 +6,9 @@ vars:
   service: "kignore"
   registry: kasperhermansen
 
+  rust:
+    publish: true
+
 please:
   project:
     owner: kjuulh
