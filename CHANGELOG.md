@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-01-21
+
+### Added
+- empty empty
+- can handle empty struct
+- trigger commit
+- add publish
+
+### Fixed
+- *(deps)* update rust crate clap to v4.5.27
+- *(deps)* update rust crate dirs to v6
+- *(deps)* update rust crate clap to v4.5.26
+- *(deps)* update rust crate clap to v4.5.24
+
+### Other
+- override release for smaller binaries
+
 ## [0.4.0] - 2024-12-22
 
 ### Added
